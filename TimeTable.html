@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Timetable</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --bg-light: #ffffff;
+      --bg-dark: #121212;
+      --text-light: #000000;
+      --text-dark: #ffffff;
+    }
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      font-family: 'Segoe UI', sans-serif;
+      transition: background-color 0.3s, color 0.3s;
+      margin: 20px;
+    }
+
+    .dark-mode {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .controls > * {
+      margin: 5px;
+    }
+
+    .toggle-btn, .download-btn {
+      padding: 8px 15px;
+      background-color: #200be4;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    select {
+      padding: 6px;
+      border-radius: 5px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    .time {
+      font-weight: bold;
+      background-color: #e6fcc2 !important;
+      color: #000 !important;
+    }
+
+    tr td:nth-child(1) {
+      font-weight: bold;
+      background-color: #0df9ee !important;
+      color: #000 !important;
+    }
+
+    .leetcode     { background: linear-gradient(to right, #667eea, #764ba2); color: white; }
+    .android      { background: linear-gradient(to right, #eaf10d, #b82ce3); color: white; }
+    .dsatheory    { background: linear-gradient(to right, #ff9a9e, #fad0c4); color: black; }
+    .break        { background: linear-gradient(to right, #f72128, #0bb9e0b6); color: black; }
+    .cehtheory    { background: linear-gradient(to right, #fbc2eb, #a6c1ee); color: black; }
+    .cehclass     { background: linear-gradient(to right, #43e97b, #38f9d7); color: black; }
+    .cehpractice  { background: linear-gradient(to right, #fa709a, #fee140); color: black; }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Mobile responsiveness */
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .toggle-btn, .download-btn, select {
+        width: 100%;
+        font-size: 14px;
+      }
+
+      table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      th, td {
+        min-width: 100px;
+        font-size: 14px;
+        padding: 8px;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body class="dark-mode">
+  <h1>🧠 YOUR FUTURE IS BUILT TODAY</h1>
+
+  <div class="controls">
+    <button onclick="toggleDarkMode()" class="toggle-btn">🌙 Toggle Dark Mode</button>
+    <label>
+      Filter Subject:
+      <select id="subjectFilter" onchange="filterSubject()">
+        <option value="all">All</option>
+        <option value="android">Android</option>
+        <option value="break">Break</option>
+        <option value="cehclass">CEH Class</option>
+        <option value="cehpractice">CEH Practice</option>
+        <option value="cehtheory">CEH Theory</option>
+        <option value="dsatheory">DSA Theory</option>
+        <option value="leetcode">LeetCode</option>
+      </select>
+    </label>
+    <button onclick="downloadPDF()" class="download-btn">🗂️ Download PDF</button>
+  </div>
+
+  <div id="timetable">
+    <table>
+      <tr>
+        <th>Time</th>
+        <th>Monday</th>
+        <th>Tuesday</th>
+        <th>Wednesday</th>
+        <th>Thursday</th>
+        <th>Friday</th>
+        <th>Saturday</th>
+        <th>Sunday</th>
+      </tr>
+      <tr>
+        <td class="time">6:00 - 7:00</td>
+        <td class="android">🤖 Android</td>
+        <td class="android">🤖 Android</td>
+        <td class="android">🤖 Android</td>
+        <td class="android">🤖 Android</td>
+        <td class="android">🤖 Android</td>
+        <td class="android">🤖 Android</td>
+        <td class="android">🤖 Android</td>
+      </tr>
+      <tr>
+        <td class="time">7:15 - 9:20</td>
+        <td class="leetcode">📘 LeetCode</td>
+        <td class="leetcode">📘 LeetCode</td>
+        <td class="leetcode">📘 LeetCode</td>
+        <td class="leetcode">📘 LeetCode</td>
+        <td class="leetcode">📘 LeetCode</td>
+        <td class="leetcode">📘 LeetCode</td>
+        <td class="leetcode">📘 LeetCode</td>
+      </tr>
+      <tr>
+        <td class="time">9:30 - 10:00</td>
+        <td class="break">🍽️ Breakfast</td>
+        <td class="break">🍽️ Breakfast</td>
+        <td class="break">🍽️ Breakfast</td>
+        <td class="break">🍽️ Breakfast</td>
+        <td class="break">🍽️ Breakfast</td>
+        <td class="break">🍽️ Breakfast</td>
+        <td class="break">🍽️ Breakfast</td>
+      </tr>
+      <tr>
+        <td class="time">10:00 - 12:00</td>
+        <td class="dsatheory">📚 DSA New Topics</td>
+        <td class="dsatheory">📚 DSA New Topics</td>
+        <td class="dsatheory">📚 DSA New Topics</td>
+        <td class="dsatheory">📚 DSA New Topics</td>
+        <td class="dsatheory">📚 DSA New Topics</td>
+        <td class="dsatheory">📚 DSA New Topics</td>
+        <td class="dsatheory">📚 DSA New Topics</td>
+      </tr>
+      <tr>
+        <td class="time">12:00 - 12:30</td>
+        <td class="dsatheory">📚 DSA Theory</td>
+        <td class="dsatheory">📚 DSA Theory</td>
+        <td class="dsatheory">📚 DSA Theory</td>
+        <td class="dsatheory">📚 DSA Theory</td>
+        <td class="dsatheory">📚 DSA Theory</td>
+        <td class="dsatheory">📚 DSA Theory</td>
+        <td class="dsatheory">📚 DSA Theory</td>
+      </tr>
+      <tr>
+        <td class="time">12:30 - 2:00</td>
+        <td class="break">🍛 Lunch</td>
+        <td class="break">🍛 Lunch</td>
+        <td class="break">🍛 Lunch</td>
+        <td class="break">🍛 Lunch</td>
+        <td class="break">🍛 Lunch</td>
+        <td class="break">🍛 Lunch</td>
+        <td class="break">🍛 Lunch</td>
+      </tr>
+      <tr>
+        <td class="time">2:00 - 3:00</td>
+        <td class="cehtheory">🔐 CEH Theory</td>
+        <td class="cehtheory">🔐 CEH Theory</td>
+        <td class="cehtheory">🔐 CEH Theory</td>
+        <td class="cehtheory">🔐 CEH Theory</td>
+        <td class="cehtheory">🔐 CEH Theory</td>
+        <td class="cehtheory">🔐 CEH Theory</td>
+        <td class="cehtheory">🔐 CEH Theory</td>
+      </tr>
+      <tr>
+        <td class="time">3:10 - 6:00</td>
+        <td class="cehclass">🎥 CEH Class</td>
+        <td class="cehclass">🎥 CEH Class</td>
+        <td class="cehclass">🎥 CEH Class</td>
+        <td class="cehclass">🎥 CEH Class</td>
+        <td class="cehclass">🎥 CEH Class</td>
+        <td class="cehclass">🎥 CEH Class</td>
+        <td class="cehclass">🎥 CEH Class</td>
+      </tr>
+      <tr>
+        <td class="time">6:00 - 7:00</td>
+        <td class="break">🍵 Break</td>
+        <td class="break">🍵 Break</td>
+        <td class="break">🍵 Break</td>
+        <td class="break">🍵 Break</td>
+        <td class="break">🍵 Break</td>
+        <td class="break">🍵 Break</td>
+        <td class="break">🍵 Break</td>
+      </tr>
+      <tr>
+        <td class="time">7:00 - 11:00</td>
+        <td class="cehpractice">💻 CEH Practice</td>
+        <td class="cehpractice">💻 CEH Practice</td>
+        <td class="cehpractice">💻 CEH Practice</td>
+        <td class="cehpractice">💻 CEH Practice</td>
+        <td class="cehpractice">💻 CEH Practice</td>
+        <td class="cehpractice">💻 CEH Practice</td>
+        <td class="cehpractice">💻 CEH Practice</td>
+      </tr>
+    </table>
+  </div>
+
+  <script>
+    function toggleDarkMode() {
+      document.body.classList.toggle('dark-mode');
+    }
+
+    function filterSubject() {
+      const selected = document.getElementById('subjectFilter').value;
+      const allTds = document.querySelectorAll('td');
+
+      allTds.forEach(td => {
+        td.classList.remove('hidden');
+        if (selected !== 'all') {
+          if (!td.classList.contains(selected) && !td.classList.contains('time')) {
+            td.classList.add('hidden');
+          }
+        }
+      });
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById('timetable');
+      const opt = {
+        margin:       0.3,
+        filename:     'CyberTimetable.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+  </script>
+</body>
+</html>
